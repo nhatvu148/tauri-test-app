@@ -8,5 +8,12 @@
   </head>
   <body>
     <h1>Welcome to Tauri!</h1>
+    <script>
+      const invoke = window.__TAURI__.invoke;
+      console.log(invoke)
+
+      // Invoke the command
+      invoke("my_custom_command");
+    </script>
   </body>
 </html>
