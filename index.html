@@ -10,10 +10,15 @@
     <h1>Welcome to Tauri!</h1>
     <script>
       const invoke = window.__TAURI__.invoke;
-      console.log(invoke)
+      console.log(invoke);
 
       // Invoke the command
       invoke("my_custom_command");
+      invoke("my_custom_command2", { invokeMessage: "Hello!" });
+      invoke("my_custom_command3").then((message) => console.log(message));
+      invoke("my_custom_command4")
+        .then((message) => console.log(message))
+        .catch((error) => console.error(error));
     </script>
   </body>
 </html>
