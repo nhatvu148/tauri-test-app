@@ -3,6 +3,7 @@
   windows_subsystem = "windows"
 )]
 
+use std::process::Command;
 use tauri::command;
 
 #[command]
@@ -32,6 +33,20 @@ fn my_custom_command4() -> Result<String, String> {
   }
 }
 
+#[command]
+fn run_cmd() -> Result<String, String> {
+  Command::new("cmd")
+    .args(&[
+      "/C",
+      "echo",
+      "Hello world",
+    ])
+    .spawn()
+    .expect("failed to execute process");
+
+  Ok("Command line worked!".into())
+}
+
 fn main() {
   let msg = String::from("Hello WORLD!");
   println!("Message from Rust: {}", msg);
@@ -40,7 +55,8 @@ fn main() {
       my_custom_command,
       my_custom_command2,
       my_custom_command3,
-      my_custom_command4
+      my_custom_command4,
+      run_cmd
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
