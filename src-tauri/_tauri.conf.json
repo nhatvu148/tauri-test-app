@@ -4,10 +4,11 @@
     "version": "0.1.0"
   },
   "build": {
-    "distDir": "../build",
-    "devPath": "http://localhost:3456",
+    "distDir": ["../index.html"],
+    "devPath": ["../index.html"],
     "beforeDevCommand": "",
-    "beforeBuildCommand": ""
+    "beforeBuildCommand": "",
+    "withGlobalTauri": true
   },
   "tauri": {
     "bundle": {
@@ -53,7 +54,7 @@
     },
     "windows": [
       {
-        "title": "Test Tauri",
+        "title": "My App",
         "width": 800,
         "height": 600,
         "resizable": true,
