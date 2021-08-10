@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { getName } from "@tauri-apps/api/app";
 import { readText, writeText } from "@tauri-apps/api/clipboard";
@@ -24,6 +24,7 @@ import {
   Col,
 } from "reactstrap";
 import ReactBSAlert from "react-bootstrap-sweetalert";
+import NotificationAlert from "react-notification-alert";
 
 appWindow.listen("tauri://close-requested", () => {
   alert("Are you sure you want to close?");
@@ -43,6 +44,28 @@ const App = () => {
   const [isPortChanged, setIsPortChanged] = useState(false);
   const [isServerOn, setIsServerOn] = useState(false);
   const [alert, setAlert] = useState(null);
+  const notificationAlertRef = useRef(null);
+
+  const notify = (type: string, message: string) => {
+    let options = {
+      place: "tc",
+      message: (
+        <div className="alert-text">
+          <span className="alert-title" data-notify="title">
+            Warning
+          </span>
+          <span data-notify="message">
+            {message}
+          </span>
+        </div>
+      ),
+      type: type,
+      icon: "ni ni-bell-55",
+      autoDismiss: 7,
+    };
+    // @ts-ignore
+    notificationAlertRef.current.notificationAlert(options);
+  };
 
   useEffect(() => {
     (async () => {
@@ -63,7 +86,7 @@ const App = () => {
       // @ts-ignore
       <ReactBSAlert
         warning
-        style={{ display: "block", marginTop: "-100px" }}
+        style={{}}
         title={message}
         onConfirm={() => {
           setAlert(null);
@@ -82,6 +105,9 @@ const App = () => {
   return (
     <div className="main-content">
       {alert}
+      <div className="rna-wrapper">
+        <NotificationAlert ref={notificationAlertRef} />
+      </div>
       <Container className="mt-5" fluid>
         <Card>
           <CardBody>
@@ -161,7 +187,8 @@ const App = () => {
                   type="button"
                   onClick={async () => {
                     if (!isServerOn) {
-                      warningMessage("Server is not running!");
+                      notify("warning", "Server is not running!");
+                      // warningMessage("Server is not running!");
                     } else {
                       await open(`http://localhost:${clientPort}`);
                     }
