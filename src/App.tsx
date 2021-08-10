@@ -77,8 +77,8 @@ const App = () => {
                 </Form>
               </div>
               <div className="col-4" style={{ justifyContent: "center" }}>
-                {isPortChanged && isServerOn ?
-                  (<Button
+                {isPortChanged && isServerOn ? (
+                  <Button
                     color="success"
                     type="button"
                     style={{ marginBottom: 10 }}
@@ -91,40 +91,40 @@ const App = () => {
                     }}
                   >
                     Restart Server
-                  </Button>)
-                  : !isServerOn ? (
-                    <Button
-                      color="success"
-                      type="button"
-                      style={{ marginBottom: 10 }}
-                      onClick={() => {
-                        const newServerPort = 4000;
-                        const newCientPort = 50505;
-                        setServerPort(newServerPort);
-                        setClientPort(newCientPort);
-                        setIsServerOn(true);
+                  </Button>
+                ) : !isServerOn ? (
+                  <Button
+                    color="success"
+                    type="button"
+                    style={{ marginBottom: 10 }}
+                    onClick={() => {
+                      const newServerPort = 4000;
+                      const newCientPort = 50505;
+                      setServerPort(newServerPort);
+                      setClientPort(newCientPort);
+                      setIsServerOn(true);
 
-                        invoke("start_server", {
-                          port: newCientPort,
-                          portProd: newServerPort,
-                        });
-                      }}
-                    >
-                      Start Server
-                    </Button>
-                  ) : (
-                    <Button
-                      color="danger"
-                      type="button"
-                      style={{ marginBottom: 10 }}
-                      onClick={() => {
-                        invoke("stop_server");
-                        setIsServerOn(false);
-                      }}
-                    >
-                      Stop Server
-                    </Button>
-                  )}
+                      invoke("start_server", {
+                        port: newCientPort,
+                        portProd: newServerPort,
+                      });
+                    }}
+                  >
+                    Start Server
+                  </Button>
+                ) : (
+                  <Button
+                    color="danger"
+                    type="button"
+                    style={{ marginBottom: 10 }}
+                    onClick={() => {
+                      invoke("stop_server");
+                      setIsServerOn(false);
+                    }}
+                  >
+                    Stop Server
+                  </Button>
+                )}
                 <Button
                   color="info"
                   type="button"
