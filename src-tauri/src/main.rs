@@ -10,7 +10,7 @@ use std::{
   thread, time,
   time::{Duration, Instant},
 };
-use tauri::command;
+use tauri::{command, WindowBuilder};
 
 #[command]
 fn my_custom_command() {
