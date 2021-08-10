@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { getName } from "@tauri-apps/api/app";
 import { readText, writeText } from "@tauri-apps/api/clipboard";
@@ -41,6 +41,20 @@ const App = () => {
   const [serverPort, setServerPort] = useState(0);
   const [isPortChanged, setIsPortChanged] = useState(false);
   const [isServerOn, setIsServerOn] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const confPath = await invoke("read_config");
+      console.log(confPath);
+      const content = await readTextFile(confPath as string);
+      const content_arr = content.split("\r\n");
+      const portClient = content_arr.filter(cf => cf.startsWith("PORT_CLIENT"))[0].split("=")[1];
+      const portProd = content_arr.filter(cf => cf.startsWith("PORT_PROD"))[0].split("=")[1];
+
+      setClientPort(Number(portClient));
+      setServerPort(Number(portProd));
+    })();
+  }, [])
 
   return (
     <div className="main-content">
@@ -160,13 +174,9 @@ const App = () => {
                     const name = await getName();
                     console.log(name);
                     console.log(await dataDir());
-                    const newPath = await invoke("read_config");
-                    console.log(newPath);
 
-                    const files = await readDir("./");
-                    console.log(files);
-                    const content = await readTextFile("./Cargo.toml");
-                    console.log(content);
+                    // const files = await readDir("./");
+                    // console.log(files);
 
                     setCounter(0);
 
