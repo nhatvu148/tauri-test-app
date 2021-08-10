@@ -40,6 +40,7 @@ const App = () => {
   const [message, setMessage] = useState("");
   const [counter, setCounter] = useState(0);
   const [clientPort, setClientPort] = useState(0);
+  const [tempClientPort, setTempClientPort] = useState(0);
   const [serverPort, setServerPort] = useState(0);
   const [isPortChanged, setIsPortChanged] = useState(false);
   const [isServerOn, setIsServerOn] = useState(false);
@@ -77,6 +78,7 @@ const App = () => {
       const portProd = content_arr.filter(cf => cf.startsWith("PORT_PROD"))[0].split("=")[1];
 
       setClientPort(Number(portClient));
+      setTempClientPort(Number(portClient));
       setServerPort(Number(portProd));
     })();
   }, [])
@@ -124,9 +126,9 @@ const App = () => {
                     </Label>
                     <Col md="7">
                       <Input
-                        value={clientPort}
+                        value={tempClientPort}
                         onChange={(event) => {
-                          setClientPort(Number(event.target.value));
+                          setTempClientPort(Number(event.target.value));
                           setIsPortChanged(true);
                         }}
                         id="example-number-input"
@@ -143,9 +145,10 @@ const App = () => {
                     type="button"
                     onClick={() => {
                       invoke("start_server", {
-                        port: clientPort,
+                        port: tempClientPort,
                         portProd: serverPort,
                       });
+                      setClientPort(tempClientPort);
                       setIsPortChanged(false);
                     }}
                   >
@@ -156,15 +159,16 @@ const App = () => {
                     color="success"
                     type="button"
                     onClick={() => {
-                      const newServerPort = 4000;
-                      const newCientPort = 50505;
-                      setServerPort(newServerPort);
-                      setClientPort(newCientPort);
                       setIsServerOn(true);
-
+                      setIsPortChanged(false);
+                      let port = clientPort;
+                      if (clientPort !== tempClientPort) {
+                        port = tempClientPort;
+                        setClientPort(port);
+                      }
                       invoke("start_server", {
-                        port: newCientPort,
-                        portProd: newServerPort,
+                        port: port,
+                        portProd: serverPort,
                       });
                     }}
                   >
@@ -176,6 +180,7 @@ const App = () => {
                     type="button"
                     onClick={() => {
                       invoke("stop_server");
+                      setClientPort(tempClientPort);
                       setIsServerOn(false);
                     }}
                   >

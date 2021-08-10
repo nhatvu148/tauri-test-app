@@ -103,6 +103,10 @@ fn stop_server() -> Result<String, String> {
     .args(&["/F", "/im", "nginx_dt.exe"])
     .spawn()
     .expect("failed to execute process");
+  Command::new("taskkill")
+    .args(&["/F", "/im", "nginx_dt.exe"])
+    .spawn()
+    .expect("failed to execute process");
 
   Command::new("taskkill")
     .args(&["/fi", "WINDOWTITLE eq JMU-DT Web Server*"])
@@ -137,6 +141,10 @@ fn restart_nginx(port: u16, port_prod: u16) -> std::io::Result<()> {
 
   let ok = edit_nginx(port, port_prod, &nginx_dir_text);
 
+  Command::new("taskkill")
+    .args(&["/F", "/im", "nginx_dt.exe"])
+    .spawn()
+    .expect("failed to execute process");
   Command::new("taskkill")
     .args(&["/F", "/im", "nginx_dt.exe"])
     .spawn()
