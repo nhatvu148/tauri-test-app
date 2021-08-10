@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC } from "react";
 
 import { getName } from "@tauri-apps/api/app";
 import { readText, writeText } from "@tauri-apps/api/clipboard";
@@ -23,6 +23,7 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import ReactBSAlert from "react-bootstrap-sweetalert";
 
 appWindow.listen("tauri://close-requested", () => {
   alert("Are you sure you want to close?");
@@ -41,6 +42,7 @@ const App = () => {
   const [serverPort, setServerPort] = useState(0);
   const [isPortChanged, setIsPortChanged] = useState(false);
   const [isServerOn, setIsServerOn] = useState(false);
+  const [alert, setAlert] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -56,14 +58,36 @@ const App = () => {
     })();
   }, [])
 
+  const warningMessage = (message: string) => {
+    setAlert(
+      // @ts-ignore
+      <ReactBSAlert
+        warning
+        style={{ display: "block", marginTop: "-100px" }}
+        title={message}
+        onConfirm={() => {
+          setAlert(null);
+        }}
+        onCancel={() => { }}
+        confirmBtnCssClass="btn-secondary"
+        cancelBtnBsStyle="danger"
+        confirmBtnText="OK"
+        // cancelBtnText="OK"
+        // showCancel
+        btnSize=""
+      />
+    );
+  };
+
   return (
     <div className="main-content">
+      {alert}
       <Container className="mt-5" fluid>
         <Card>
           <CardBody>
             <Row align="center">
-              <div className="col-5">
-                <Form>
+              <div className="col-6" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Form style={{ marginTop: 21 }}>
                   <FormGroup className="row">
                     <Label
                       className="form-control-label"
@@ -86,12 +110,11 @@ const App = () => {
                   </FormGroup>
                 </Form>
               </div>
-              <div className="col-4" style={{ justifyContent: "center" }}>
+              <div className="col-6" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                 {isPortChanged && isServerOn ? (
                   <Button
                     color="success"
                     type="button"
-                    style={{ marginBottom: 10 }}
                     onClick={() => {
                       invoke("start_server", {
                         port: clientPort,
@@ -106,7 +129,6 @@ const App = () => {
                   <Button
                     color="success"
                     type="button"
-                    style={{ marginBottom: 10 }}
                     onClick={() => {
                       const newServerPort = 4000;
                       const newCientPort = 50505;
@@ -126,7 +148,6 @@ const App = () => {
                   <Button
                     color="danger"
                     type="button"
-                    style={{ marginBottom: 10 }}
                     onClick={() => {
                       invoke("stop_server");
                       setIsServerOn(false);
@@ -138,10 +159,9 @@ const App = () => {
                 <Button
                   color="info"
                   type="button"
-                  style={{ marginBottom: 20 }}
                   onClick={async () => {
                     if (!isServerOn) {
-                      alert("Server is not running!");
+                      warningMessage("Server is not running!");
                     } else {
                       await open(`http://localhost:${clientPort}`);
                     }
@@ -150,11 +170,10 @@ const App = () => {
                   Launch Browser
                 </Button>
               </div>
-              <div className="col-3" style={{ justifyContent: "center" }}>
+              {/* <div className="col-3" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <Button
                   color="success"
                   type="button"
-                  style={{ marginBottom: 10 }}
                   onClick={() => {
                     invoke("my_custom_command2", { invokeMessage: "Hello!" });
                     invoke("my_custom_command3").then((message) => {
@@ -169,7 +188,6 @@ const App = () => {
                 <Button
                   color="success"
                   type="button"
-                  style={{ marginBottom: 20 }}
                   onClick={async () => {
                     const name = await getName();
                     console.log(name);
@@ -185,12 +203,12 @@ const App = () => {
                 >
                   Clear
                 </Button>
-              </div>
+              </div> */}
             </Row>
             <Row align="center">
-              <Col>
+              <Col style={{ marginTop: 20 }}>
                 <h2>
-                  {!isPortChanged || serverPort === 0
+                  {!isServerOn
                     ? "Server stopped!"
                     : `JMU-DT Web Server is running on port ${clientPort}!`}
                 </h2>
