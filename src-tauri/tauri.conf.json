@@ -53,9 +53,9 @@
     },
     "windows": [
       {
-        "title": "My Tauri App",
+        "title": "JMU-DT Web Controller",
         "width": 800,
-        "height": 600,
+        "height": 330,
         "resizable": true,
         "fullscreen": false
       }

@@ -24,10 +24,12 @@ invoke("my_custom_command4")
 
 const App = () => {
   const [message, setMessage] = useState("");
+  const [clientPort, setClientPort] = useState(0);
+  const [serverPort, setServerPort] = useState(0);
 
   return (
     <div className="App">
-      <h1>Hello World!</h1>
+      <h1>JMU-DT Web Controller</h1>
       <button onClick={() => {
         invoke("my_custom_command2", { invokeMessage: "Hello!" });
         invoke("my_custom_command3").then((message) => {
@@ -49,11 +51,30 @@ const App = () => {
 
         setMessage("");
       }}>Clear</button>
-      <button onClick={() => {
-        invoke("run_cmd");;
-      }}>Run Command Line</button>
+      {serverPort === 0 ?
+        <button onClick={() => {
+          const newServerPort = 4000;
+          const newCientPort = 50505;
+          setServerPort(newServerPort);
+          setClientPort(newCientPort);
+
+          invoke("start_server", { port: newCientPort, portProd: newServerPort });;
+        }}>Start Server</button>
+        :
+        <button onClick={() => {
+          const newServerPort = 0;
+          const newCientPort = 0;
+          setServerPort(newServerPort);
+          setClientPort(newCientPort);
+
+          invoke("stop_server");;
+        }}>Stop Server</button>
+      }
+
       <button onClick={() => { relaunch(); }}>Relaunch</button>
-      <button onClick={async () => { await open('https://chiyoda.e-technostar.com'); }}>Open Something</button>
+      <button onClick={async () => { await open(`http://localhost:${clientPort}`); }}>Launch JMU-DT Web</button>
+
+      <h2>{serverPort === 0 ? "Server stopped!" : `JMU-DT Web Server is running on port ${clientPort}!`}</h2>
       <h2>{message}</h2>
     </div >
   );
