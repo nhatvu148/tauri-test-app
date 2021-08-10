@@ -24,6 +24,7 @@ invoke("my_custom_command4")
 
 const App = () => {
   const [message, setMessage] = useState("");
+  const [counter, setCounter] = useState(0);
   const [clientPort, setClientPort] = useState(0);
   const [serverPort, setServerPort] = useState(0);
 
@@ -34,6 +35,7 @@ const App = () => {
         invoke("my_custom_command2", { invokeMessage: "Hello!" });
         invoke("my_custom_command3").then((message) => {
           setMessage(message as string);
+          setCounter(prev => prev + 1);
           console.log(message)
         });
       }}>Click me</button>
@@ -48,6 +50,8 @@ const App = () => {
         console.log(files);
         const content = await readTextFile("./Cargo.toml");
         console.log(content);
+
+        setCounter(0);
 
         setMessage("");
       }}>Clear</button>
@@ -75,7 +79,7 @@ const App = () => {
       <button onClick={async () => { await open(`http://localhost:${clientPort}`); }}>Launch JMU-DT Web</button>
 
       <h2>{serverPort === 0 ? "Server stopped!" : `JMU-DT Web Server is running on port ${clientPort}!`}</h2>
-      <h2>{message}</h2>
+      <h2>{message} {counter ? `${counter}!` : ""}</h2>
     </div >
   );
 }
