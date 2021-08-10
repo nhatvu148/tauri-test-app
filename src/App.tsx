@@ -55,9 +55,7 @@ const App = () => {
           <span className="alert-title" data-notify="title">
             Warning
           </span>
-          <span data-notify="message">
-            {message}
-          </span>
+          <span data-notify="message">{message}</span>
         </div>
       ),
       type: type,
@@ -74,14 +72,18 @@ const App = () => {
       console.log(confPath);
       const content = await readTextFile(confPath as string);
       const content_arr = content.split("\r\n");
-      const portClient = content_arr.filter(cf => cf.startsWith("PORT_CLIENT"))[0].split("=")[1];
-      const portProd = content_arr.filter(cf => cf.startsWith("PORT_PROD"))[0].split("=")[1];
+      const portClient = content_arr
+        .filter((cf) => cf.startsWith("PORT_CLIENT"))[0]
+        .split("=")[1];
+      const portProd = content_arr
+        .filter((cf) => cf.startsWith("PORT_PROD"))[0]
+        .split("=")[1];
 
       setClientPort(Number(portClient));
       setTempClientPort(Number(portClient));
       setServerPort(Number(portProd));
     })();
-  }, [])
+  }, []);
 
   const warningMessage = (message: string) => {
     setAlert(
@@ -93,7 +95,7 @@ const App = () => {
         onConfirm={() => {
           setAlert(null);
         }}
-        onCancel={() => { }}
+        onCancel={() => {}}
         confirmBtnCssClass="btn-secondary"
         cancelBtnBsStyle="danger"
         confirmBtnText="OK"
@@ -114,7 +116,14 @@ const App = () => {
         <Card>
           <CardBody>
             <Row align="center">
-              <div className="col-6" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <div
+                className="col-6"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
                 <Form style={{ marginTop: 21 }}>
                   <FormGroup className="row">
                     <Label
@@ -138,7 +147,14 @@ const App = () => {
                   </FormGroup>
                 </Form>
               </div>
-              <div className="col-6" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <div
+                className="col-6"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
                 {isPortChanged && isServerOn ? (
                   <Button
                     color="success"
