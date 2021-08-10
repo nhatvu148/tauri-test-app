@@ -3,7 +3,9 @@
   windows_subsystem = "windows"
 )]
 
+use directories::{BaseDirs, ProjectDirs, UserDirs};
 use std::{
+  env,
   fs::{self, File},
   io::{prelude::*, LineWriter},
   process::Command,
@@ -68,6 +70,20 @@ fn start_server(port: u16, port_prod: u16) -> Result<String, String> {
 }
 
 #[command]
+fn read_config() -> Result<String, String> {
+  let my_path = env::current_dir().unwrap().join("web-server/.env");
+  dotenv::from_path(&my_path).ok();
+  if let Some(base_dirs) = BaseDirs::new() {
+    let mut new_path = base_dirs.data_local_dir().to_string_lossy().to_string();
+    new_path.push_str("\\jmudt-web-server\\settings");
+    println!("{}", new_path); //jmudt-web-server\settings
+    Ok(new_path.into())
+  } else {
+    Err("This failed!".into())
+  }
+}
+
+#[command]
 fn stop_server() -> Result<String, String> {
   Command::new("taskkill")
     .args(&["/F", "/im", "nginx_dt.exe"])
@@ -93,7 +109,8 @@ fn main() {
       my_custom_command3,
       my_custom_command4,
       start_server,
-      stop_server
+      stop_server,
+      read_config
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

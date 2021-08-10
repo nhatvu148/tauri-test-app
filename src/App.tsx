@@ -7,6 +7,7 @@ import { readDir, readTextFile } from "@tauri-apps/api/fs";
 import { relaunch, exit } from "@tauri-apps/api/process";
 import { open } from "@tauri-apps/api/shell";
 import { appWindow, WindowManager } from "@tauri-apps/api/window";
+import { dataDir } from "@tauri-apps/api/path";
 // import { emit, listen } from '@tauri-apps/api/event'
 
 import {
@@ -23,11 +24,6 @@ import {
   Col,
 } from "reactstrap";
 
-appWindow.listen("tauri://move", ({ event, payload }) => {
-  // @ts-ignore
-  const { x, y } = payload; // payload here is a `PhysicalPosition`
-  console.log(x, y);
-});
 appWindow.listen("tauri://close-requested", () => {
   alert("Are you sure you want to close?");
 });
@@ -163,9 +159,9 @@ const App = () => {
                   onClick={async () => {
                     const name = await getName();
                     console.log(name);
-                    writeText("Kyoko");
-                    const text = await readText();
-                    console.log(text);
+                    console.log(await dataDir());
+                    const newPath = await invoke("read_config");
+                    console.log(newPath);
 
                     const files = await readDir("./");
                     console.log(files);
