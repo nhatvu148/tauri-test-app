@@ -31,3 +31,8 @@
 - yarn tauri init
 - yarn build
 - yarn bundle
+
+## Big text generator for CMD:
+
+- https://www.fancytextpro.com/BigTextGenerator/Soft
+- https://onlinestringtools.com/escape-string

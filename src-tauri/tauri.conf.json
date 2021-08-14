@@ -55,8 +55,8 @@
       {
         "title": "JMU-DT Web Controller",
         "width": 800,
-        "height": 330,
-        "resizable": true,
+        "height": 550,
+        "resizable": false,
         "fullscreen": false
       }
     ],
