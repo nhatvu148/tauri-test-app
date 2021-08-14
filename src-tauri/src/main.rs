@@ -68,7 +68,6 @@ fn main() {
 
         while let Some(event) = rx.recv().await {
           if let CommandEvent::Stdout(line) = event {
-            println!("{}", line);
             window
               .emit("message", Some(format!("'{}'", line)))
               .expect("failed to emit event");
