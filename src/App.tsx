@@ -6,10 +6,10 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { readDir, readTextFile } from "@tauri-apps/api/fs";
 import { relaunch, exit } from "@tauri-apps/api/process";
 import { open } from "@tauri-apps/api/shell";
-import { appWindow, WindowManager } from "@tauri-apps/api/window";
+import { appWindow, WindowManager, WebviewWindow } from "@tauri-apps/api/window";
 import { dataDir } from "@tauri-apps/api/path";
 import { sendNotification, isPermissionGranted, requestPermission } from "@tauri-apps/api/notification";
-// import { emit, listen } from '@tauri-apps/api/event'
+import { emit, listen } from '@tauri-apps/api/event'
 
 import {
   Button,
@@ -32,6 +32,10 @@ import NotificationAlert from "react-notification-alert";
 // await appWindow.close();
 // }
 // });
+let label: string;
+appWindow.listen('tauri://window-created', function (event: any) {
+  label = event.payload.label as string;
+})
 
 // Invoke the command
 invoke("my_custom_command");
@@ -49,6 +53,8 @@ const App = () => {
   const [isServerOn, setIsServerOn] = useState(false);
   const [alert, setAlert] = useState(null);
   const notificationAlertRef = useRef(null);
+
+  const [log, setLog] = useState("");
 
   const notify = (type: string, message: string) => {
     let options = {
@@ -87,6 +93,23 @@ const App = () => {
       setServerPort(Number(portProd));
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      const unlisten = await listen("rust-event", (message: any) => {
+        console.log(message.payload.data);
+        setLog(message.payload.data);
+        // @ts-ignore
+        window.term.echo(message.payload.data);
+      })
+
+      return () => {
+        if (unlisten) {
+          unlisten();
+        }
+      }
+    })()
+  }, [])
 
   const warningMessage = (message: string) => {
     setAlert(
@@ -216,10 +239,14 @@ const App = () => {
                         console.log(permit);
                       }
                       sendNotification("Server is not running!");
+
+                      emit('clicked', 'message from ' + label);
                       // notify("warning", "Server is not running!");
                       // warningMessage("Server is not running!");
                     } else {
-                      await open(`http://localhost:${clientPort}`);
+                      // await open(`http://localhost:${clientPort}`);
+
+                      emit("js-event", "this is the payload string");
                     }
                   }}
                 >

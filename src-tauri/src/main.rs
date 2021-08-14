@@ -25,18 +25,23 @@ fn main() {
   let msg = String::from("Hello WORLD!");
   println!("Message from Rust: {}", msg);
   tauri::Builder::default()
-    // .on_page_load(|window, _| {
-    //   let window_ = window.clone();
-    //   window.listen("js-event", move |event| {
-    //     println!("got js-event with message '{:?}'", event.payload());
-    //     let reply = Reply {
-    //       data: "something else".to_string(),
-    //     };
-    //     window_
-    //       .emit("rust-event", Some(reply))
-    //       .expect("failed to emit");
-    //   });
-    // })
+    .on_page_load(|window, _payload| {
+      let label = window.label().to_string();
+      window.listen("clicked".to_string(), move |_payload| {
+        println!("got 'clicked' event on window '{}'", label);
+      });
+
+      let window_ = window.clone();
+      window.listen("js-event", move |event| {
+        println!("got js-event with message '{:?}'", event.payload());
+        let reply = Reply {
+          data: "Kyoko Murakami".to_string(),
+        };
+        window_
+          .emit("rust-event", Some(reply))
+          .expect("failed to emit");
+      });
+    })
     // .menu(menu::get_menu())
     // .on_menu_event(|event| {
     //   println!("{:?}", event.menu_item_id());
