@@ -229,6 +229,8 @@ const App = () => {
                     color="danger"
                     type="button"
                     onClick={() => {
+                      emit("kill_server_process");
+            
                       invoke("stop_server");
                       setClientPort(tempClientPort);
                       setIsServerOn(false);
@@ -249,6 +251,8 @@ const App = () => {
                       sendNotification("Server is not running!");
 
                       emit('clicked', 'message from ' + label);
+
+                      invoke("window_label", { text: "Kyoko" });
 
                       // @ts-ignore
                       window.term.echo("clicked");

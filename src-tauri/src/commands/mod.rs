@@ -1,9 +1,19 @@
+#[cfg(windows)]
+extern crate winapi;
 use directories::BaseDirs;
-use std::{path::Path, process::Command, thread, time};
-use tauri::{command, Window};
-
+use std::{
+  path::{Path, PathBuf},
+  process::Command,
+  thread, time,
+};
+use tauri::{
+  api::process::{Command as TauriCommand, CommandEvent},
+  command, State, Window,
+};
 pub mod utils;
 use utils::restart_nginx;
+
+use crate::AppState;
 
 #[command]
 pub fn my_custom_command() {
@@ -33,7 +43,12 @@ pub fn my_custom_command4() -> Result<String, String> {
 }
 
 #[command]
-pub fn start_server(port: u16, port_prod: u16) -> Result<String, String> {
+pub fn start_server(
+  window: Window,
+  state: State<'static, AppState>,
+  port: u16,
+  port_prod: u16,
+) -> Result<String, String> {
   restart_nginx(port, port_prod).unwrap();
 
   Command::new("taskkill")
@@ -44,18 +59,44 @@ pub fn start_server(port: u16, port_prod: u16) -> Result<String, String> {
   let duration = time::Duration::from_millis(100);
   thread::sleep(duration);
 
-  Command::new("cmd")
-    .args(&[
-      "/C",
-      "cd",
-      "C:/Users/nhatv/Work/TechnoStar/jmu-dt",
-      "&&",
-      "start",
-      "start_server.cmd",
-      port_prod.to_string().as_str(),
-    ])
-    .spawn()
-    .expect("failed to execute process");
+  tauri::async_runtime::spawn(async move {
+    let path = PathBuf::from(r"C:\Users\nhatv\Work\TechnoStar\jmu-dt");
+    let (mut rx, child) = TauriCommand::new("cmd")
+      .args(&["/C", "start_server.cmd", port_prod.to_string().as_str()])
+      .current_dir(path)
+      .spawn()
+      .expect("Failed to spawn cmd");
+
+    let child_id = child.pid();
+
+    state.inner().value = child_id;
+    println!("child_id: {}", state.inner().value);
+
+    while let Some(event) = rx.recv().await {
+      if let CommandEvent::Stdout(line) = event {
+        window
+          .emit("message", Some(format!("{}", line)))
+          .expect("failed to emit event");
+      } else if let CommandEvent::Stderr(line) = event {
+        window
+          .emit("message", Some(format!("{}", line)))
+          .expect("failed to emit event");
+      }
+    }
+  });
+
+  // Command::new("cmd")
+  //   .args(&[
+  //     "/C",
+  //     "cd",
+  //     "C:/Users/nhatv/Work/TechnoStar/jmu-dt",
+  //     "&&",
+  //     "start",
+  //     "start_server.cmd",
+  //     port_prod.to_string().as_str(),
+  //   ])
+  //   .spawn()
+  //   .expect("failed to execute process");
 
   Ok("Command line worked!".into())
 }
@@ -110,4 +151,9 @@ pub fn stop_server() -> Result<String, String> {
 #[command]
 pub async fn menu_toggle(window: Window) {
   window.menu_handle().toggle().unwrap();
+}
+
+#[command]
+pub fn window_label(window: Window, text: String) {
+  println!("window label: {} and {}", window.label(), text);
 }
