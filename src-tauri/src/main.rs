@@ -8,6 +8,7 @@ use commands::{
   my_custom_command, my_custom_command2, my_custom_command3, my_custom_command4, read_config,
   start_server, stop_server,
 };
+use tauri::{Event, Manager};
 
 fn main() {
   let msg = String::from("Hello WORLD!");
@@ -22,6 +23,13 @@ fn main() {
       stop_server,
       read_config
     ])
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+    .build(tauri::generate_context!())
+    .expect("error while building tauri application")
+    .run(|app_handle, e| {
+      if let Event::CloseRequested { label, api, .. } = e {
+        api.prevent_close();
+        let window = app_handle.get_window(&label).unwrap();
+        window.emit("close-requested", ()).unwrap();
+      }
+    })
 }
