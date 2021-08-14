@@ -25,6 +25,21 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://unpkg.com/jquery.terminal/js/jquery.terminal.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/jquery.terminal/css/jquery.terminal.min.css"
+    />
+    <!-- <style>
+      .terminal,
+      .cmd,
+      .terminal .terminal-output div div,
+      .cmd .prompt {
+        font-size: 20px;
+        line-height: 14px;
+      }
+    </style> -->
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -39,5 +54,33 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <div id="terminal" style="height: 241px"></div>
+    <script>
+      $("#terminal").terminal(
+        {
+          title: function (...args) {
+            const options = $.terminal.parse_options(args);
+            return fetch(options.url || "https://terminal.jcubic.pl")
+              .then((r) => r.text())
+              .then((html) => html.match(/<title>([^>]+)<\/title>/)[1]);
+          },
+        },
+        {
+          checkArity: false,
+          prompt: "[[;green;]jmu-dt@server$ ]",
+          greetings: "JMU-DT Web Terminal",
+        }
+      );
+      var term = $("#terminal").terminal(function (command) {});
+      // term.set_prompt(function (set_prompt) {
+      //   if (this.get_token()) {
+      //     set_prompt(this.login_name() + "@server$ ");
+      //   } else {
+      //     set_prompt("guest@server$ ");
+      //   }
+      // });
+      // term.exec("title", true);
+      term.echo("foo");
+    </script>
   </body>
 </html>
