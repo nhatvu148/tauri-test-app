@@ -26,11 +26,11 @@ import {
 import ReactBSAlert from "react-bootstrap-sweetalert";
 import NotificationAlert from "react-notification-alert";
 
-appWindow.listen("tauri://close-requested", async () => {
-  // if (await window.confirm("Are you sure you want to close?")) {
-    // await appWindow.close();
-  // }
-});
+// appWindow.listen("tauri://close-requested", async () => {
+// if (await window.confirm("Are you sure you want to close?")) {
+// await appWindow.close();
+// }
+// });
 
 // Invoke the command
 invoke("my_custom_command");
@@ -97,7 +97,7 @@ const App = () => {
         onConfirm={() => {
           setAlert(null);
         }}
-        onCancel={() => {}}
+        onCancel={() => { }}
         confirmBtnCssClass="btn-secondary"
         cancelBtnBsStyle="danger"
         confirmBtnText="OK"

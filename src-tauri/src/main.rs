@@ -106,6 +106,8 @@ fn main() {
         let answer = dialog::ask("Close App", "Are you sure you want to close?");
 
         if let dialog::AskResponse::Yes = answer {
+          stop_server().unwrap();
+
           window.close().unwrap();
         }
       }

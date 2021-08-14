@@ -1,6 +1,6 @@
 use directories::BaseDirs;
 use std::{path::Path, process::Command, thread, time};
-use tauri::command;
+use tauri::{command, Window};
 
 pub mod utils;
 use utils::restart_nginx;
@@ -107,7 +107,7 @@ pub fn stop_server() -> Result<String, String> {
   Ok("Command line worked!".into())
 }
 
-#[tauri::command]
-pub async fn menu_toggle(window: tauri::Window) {
+#[command]
+pub async fn menu_toggle(window: Window) {
   window.menu_handle().toggle().unwrap();
 }
