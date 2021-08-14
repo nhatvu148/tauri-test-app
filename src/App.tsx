@@ -27,9 +27,9 @@ import ReactBSAlert from "react-bootstrap-sweetalert";
 import NotificationAlert from "react-notification-alert";
 
 appWindow.listen("tauri://close-requested", async () => {
-  if (await window.confirm("Are you sure you want to close?")) {
-    await appWindow.close();
-  }
+  // if (await window.confirm("Are you sure you want to close?")) {
+    // await appWindow.close();
+  // }
 });
 
 // Invoke the command

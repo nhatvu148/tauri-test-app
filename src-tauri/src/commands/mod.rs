@@ -106,3 +106,8 @@ pub fn stop_server() -> Result<String, String> {
 
   Ok("Command line worked!".into())
 }
+
+#[tauri::command]
+pub async fn menu_toggle(window: tauri::Window) {
+  window.menu_handle().toggle().unwrap();
+}
