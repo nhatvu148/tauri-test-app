@@ -14,9 +14,9 @@ import "./assets/vendor/nucleo/css/nucleo.css";
 import "./assets/scss/argon-dashboard-pro-react.scss?v1.2.0";
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  // <React.StrictMode>
+  <App />,
+  // </React.StrictMode>,
   document.getElementById("root")
 );
 

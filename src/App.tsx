@@ -8,6 +8,7 @@ import { relaunch, exit } from "@tauri-apps/api/process";
 import { open } from "@tauri-apps/api/shell";
 import { appWindow, WindowManager } from "@tauri-apps/api/window";
 import { dataDir } from "@tauri-apps/api/path";
+import { sendNotification, isPermissionGranted, requestPermission } from "@tauri-apps/api/notification";
 // import { emit, listen } from '@tauri-apps/api/event'
 
 import {
@@ -210,7 +211,12 @@ const App = () => {
                   type="button"
                   onClick={async () => {
                     if (!isServerOn) {
-                      notify("warning", "Server is not running!");
+                      if (!(await isPermissionGranted())) {
+                        const permit = await requestPermission();
+                        console.log(permit);
+                      }
+                      sendNotification("Server is not running!");
+                      // notify("warning", "Server is not running!");
                       // warningMessage("Server is not running!");
                     } else {
                       await open(`http://localhost:${clientPort}`);
