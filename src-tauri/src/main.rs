@@ -12,8 +12,13 @@ use commands::{
 };
 use serde::Serialize;
 use tauri::{
-  api::dialog, CustomMenuItem, Event, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
-  WindowBuilder, WindowUrl,
+  api::{
+    dialog,
+    path::{resolve_path, BaseDirectory},
+    process::{Command, CommandEvent},
+  },
+  CustomMenuItem, Event, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowBuilder,
+  WindowUrl,
 };
 
 #[derive(Serialize)]
@@ -24,6 +29,16 @@ struct Reply {
 fn main() {
   let msg = String::from("Hello WORLD!");
   println!("Message from Rust: {}", msg);
+
+  let context = tauri::generate_context!();
+  let script_path = resolve_path(
+    context.config(),
+    context.package_info(),
+    "assets/index.js",
+    Some(BaseDirectory::Resource),
+  )
+  .unwrap();
+
   tauri::Builder::default()
     .on_page_load(|window, _payload| {
       let label = window.label().to_string();
@@ -41,6 +56,27 @@ fn main() {
           .emit("rust-event", Some(reply))
           .expect("failed to emit");
       });
+    })
+    .setup(move |app| {
+      let window = app.get_window("main").unwrap();
+      let script_path = script_path.to_string_lossy().to_string();
+      tauri::async_runtime::spawn(async move {
+        let (mut rx, _child) = Command::new("node")
+          .args(&[script_path])
+          .spawn()
+          .expect("Failed to spawn node");
+
+        while let Some(event) = rx.recv().await {
+          if let CommandEvent::Stdout(line) = event {
+            println!("{}", line);
+            window
+              .emit("message", Some(format!("'{}'", line)))
+              .expect("failed to emit event");
+          }
+        }
+      });
+
+      Ok(())
     })
     // .menu(menu::get_menu())
     // .on_menu_event(|event| {
@@ -101,7 +137,7 @@ fn main() {
       read_config,
       menu_toggle
     ])
-    .build(tauri::generate_context!())
+    .build(context)
     .expect("error while building tauri application")
     .run(|app_handle, e| {
       if let Event::CloseRequested { label, api, .. } = e {

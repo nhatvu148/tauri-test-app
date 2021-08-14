@@ -98,14 +98,22 @@ const App = () => {
     (async () => {
       const unlisten = await listen("rust-event", (message: any) => {
         console.log(message.payload.data);
-        setLog(message.payload.data);
+        // setLog(message.payload.data);
         // @ts-ignore
         window.term.echo(message.payload.data);
+      })
+
+      const unlisten2 = await listen('message', (event) => {
+        // @ts-ignore
+        window.term.echo(event.payload);
       })
 
       return () => {
         if (unlisten) {
           unlisten();
+        }
+        if (unlisten2) {
+          unlisten2();
         }
       }
     })()
@@ -241,11 +249,13 @@ const App = () => {
                       sendNotification("Server is not running!");
 
                       emit('clicked', 'message from ' + label);
+
+                      // @ts-ignore
+                      window.term.echo("clicked");
                       // notify("warning", "Server is not running!");
                       // warningMessage("Server is not running!");
                     } else {
-                      // await open(`http://localhost:${clientPort}`);
-
+                      await open(`http://localhost:${clientPort}`);
                       emit("js-event", "this is the payload string");
                     }
                   }}
