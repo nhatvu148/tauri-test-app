@@ -4,7 +4,6 @@
 )]
 
 mod commands;
-mod utils;
 use commands::{
   my_custom_command, my_custom_command2, my_custom_command3, my_custom_command4, read_config,
   start_server, stop_server,

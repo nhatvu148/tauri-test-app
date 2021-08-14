@@ -1,7 +1,9 @@
-use crate::utils::restart_nginx;
 use directories::BaseDirs;
 use std::{path::Path, process::Command, thread, time};
 use tauri::command;
+
+pub mod utils;
+use utils::restart_nginx;
 
 #[command]
 pub fn my_custom_command() {
