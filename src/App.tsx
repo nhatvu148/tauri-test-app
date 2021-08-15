@@ -6,10 +6,18 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { readDir, readTextFile } from "@tauri-apps/api/fs";
 import { relaunch, exit } from "@tauri-apps/api/process";
 import { open } from "@tauri-apps/api/shell";
-import { appWindow, WindowManager, WebviewWindow } from "@tauri-apps/api/window";
+import {
+  appWindow,
+  WindowManager,
+  WebviewWindow,
+} from "@tauri-apps/api/window";
 import { dataDir } from "@tauri-apps/api/path";
-import { sendNotification, isPermissionGranted, requestPermission } from "@tauri-apps/api/notification";
-import { emit, listen } from '@tauri-apps/api/event'
+import {
+  sendNotification,
+  isPermissionGranted,
+  requestPermission,
+} from "@tauri-apps/api/notification";
+import { emit, listen } from "@tauri-apps/api/event";
 
 import {
   Button,
@@ -33,9 +41,9 @@ import NotificationAlert from "react-notification-alert";
 // }
 // });
 let label: string;
-appWindow.listen('tauri://window-created', function (event: any) {
+appWindow.listen("tauri://window-created", function (event: any) {
   label = event.payload.label as string;
-})
+});
 
 // Invoke the command
 invoke("my_custom_command");
@@ -101,10 +109,10 @@ const App = () => {
       //   window.term.echo(message.payload.data);
       // })
 
-      const unlisten2 = await listen('message', (event) => {
+      const unlisten2 = await listen("message", (event) => {
         // @ts-ignore
         window.term.echo(event.payload);
-      })
+      });
 
       return () => {
         // if (unlisten) {
@@ -113,9 +121,9 @@ const App = () => {
         if (unlisten2) {
           unlisten2();
         }
-      }
-    })()
-  }, [])
+      };
+    })();
+  }, []);
 
   const warningMessage = (message: string) => {
     setAlert(
@@ -127,7 +135,7 @@ const App = () => {
         onConfirm={() => {
           setAlert(null);
         }}
-        onCancel={() => { }}
+        onCancel={() => {}}
         confirmBtnCssClass="btn-secondary"
         cancelBtnBsStyle="danger"
         confirmBtnText="OK"
@@ -248,7 +256,11 @@ const App = () => {
                         const permit = await requestPermission();
                         console.log(permit);
                       }
-                      sendNotification("Server is not running!");
+                      sendNotification({
+                        title: "JMU-DT Web Controller",
+                        body: "Server is not running!",
+                        icon: "",
+                      });
 
                       // emit('clicked', 'message from ' + label);
 
