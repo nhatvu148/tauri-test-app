@@ -45,7 +45,8 @@ pub fn start_server(window: Window, port: u16, port_prod: u16) -> Result<String,
   restart_nginx(port, port_prod).unwrap();
 
   Command::new("taskkill")
-    .args(&["/fi", "WINDOWTITLE eq JMU-DT Web Server*"])
+    // .args(&["/fi", "WINDOWTITLE eq JMU-DT Web Server*"])
+    .args(&["/f", "/im", "node.exe"])
     .spawn()
     .expect("failed to execute process");
 

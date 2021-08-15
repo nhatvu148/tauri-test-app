@@ -200,6 +200,9 @@ const App = () => {
                     color="success"
                     type="button"
                     onClick={() => {
+                      // @ts-ignore
+                      window.term.exec("clear", true);
+                      
                       invoke("start_server", {
                         port: tempClientPort,
                         portProd: serverPort,
