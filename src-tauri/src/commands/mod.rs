@@ -128,7 +128,7 @@ pub fn stop_server() -> Result<String, String> {
 
   Command::new("taskkill")
     // .args(&["/fi", "WINDOWTITLE eq JMU-DT Web Server*"])
-    .args(&["/f", "/im", "node_dt.exe"])
+    .args(&["/f", "/im", "node.exe"])
     .spawn()
     .expect("failed to execute process");
   // TODO: pass Err to Front end

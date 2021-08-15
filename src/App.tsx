@@ -54,8 +54,6 @@ const App = () => {
   const [alert, setAlert] = useState(null);
   const notificationAlertRef = useRef(null);
 
-  const [log, setLog] = useState("");
-
   const notify = (type: string, message: string) => {
     let options = {
       place: "tc",
@@ -96,12 +94,12 @@ const App = () => {
 
   useEffect(() => {
     (async () => {
-      const unlisten = await listen("rust-event", (message: any) => {
-        console.log(message.payload.data);
-        // setLog(message.payload.data);
-        // @ts-ignore
-        window.term.echo(message.payload.data);
-      })
+      // const unlisten = await listen("rust-event", (message: any) => {
+      //   console.log(message.payload.data);
+      //   // setLog(message.payload.data);
+      //   // @ts-ignore
+      //   window.term.echo(message.payload.data);
+      // })
 
       const unlisten2 = await listen('message', (event) => {
         // @ts-ignore
@@ -109,9 +107,9 @@ const App = () => {
       })
 
       return () => {
-        if (unlisten) {
-          unlisten();
-        }
+        // if (unlisten) {
+        //   unlisten();
+        // }
         if (unlisten2) {
           unlisten2();
         }
@@ -230,8 +228,10 @@ const App = () => {
                     type="button"
                     onClick={() => {
                       // emit("kill_server_process");
-            
+
                       invoke("stop_server");
+                      // @ts-ignore
+                      window.term.exec("clear", true);
                       setClientPort(tempClientPort);
                       setIsServerOn(false);
                     }}
@@ -250,17 +250,17 @@ const App = () => {
                       }
                       sendNotification("Server is not running!");
 
-                      emit('clicked', 'message from ' + label);
+                      // emit('clicked', 'message from ' + label);
 
-                      invoke("window_label", { text: "Kyoko" });
+                      // invoke("window_label", { text: "Hello" });
 
                       // @ts-ignore
-                      window.term.echo("clicked");
+                      // window.term.echo("clicked");
                       // notify("warning", "Server is not running!");
                       // warningMessage("Server is not running!");
                     } else {
                       await open(`http://localhost:${clientPort}`);
-                      emit("js-event", "this is the payload string");
+                      // emit("js-event", "this is the payload string");
                     }
                   }}
                 >

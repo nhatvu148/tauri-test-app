@@ -4,7 +4,6 @@
 )]
 
 mod commands;
-mod menu;
 use commands::{
   menu_toggle, my_custom_command, my_custom_command2, my_custom_command3, my_custom_command4,
   read_config, start_server, stop_server, window_label,
@@ -41,7 +40,7 @@ fn main() {
       window.listen("js-event", move |event| {
         println!("got js-event with message '{:?}'", event.payload());
         let reply = Reply {
-          data: "Kyoko Murakami".to_string(),
+          data: "Test event".to_string(),
         };
         window_
           .emit("rust-event", Some(reply))
