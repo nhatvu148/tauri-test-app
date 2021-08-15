@@ -5,32 +5,16 @@
 
 mod commands;
 mod menu;
-
 use commands::{
   menu_toggle, my_custom_command, my_custom_command2, my_custom_command3, my_custom_command4,
   read_config, start_server, stop_server, window_label,
 };
 use serde::Serialize;
-use tauri::{CustomMenuItem, Event, Manager, State, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowBuilder, WindowUrl, api::{
-    dialog,
-    path::{resolve_path, BaseDirectory},
-    process::{Command, CommandEvent},
-  }};
-use winapi::um::{
-  handleapi::CloseHandle,
-  processthreadsapi::{OpenProcess, TerminateProcess},
-  winnt::PROCESS_TERMINATE,
-};
+use tauri::{api::dialog, Event, Manager};
 
 #[derive(Serialize)]
 struct Reply {
   data: String,
-}
-
-#[derive(Debug)]
-pub struct AppState {
-  value: u32,
-  label: String,
 }
 
 fn main() {
@@ -38,19 +22,15 @@ fn main() {
   println!("Message from Rust: {}", msg);
 
   let context = tauri::generate_context!();
-  let script_path = resolve_path(
-    context.config(),
-    context.package_info(),
-    "assets/index.js",
-    Some(BaseDirectory::Resource),
-  )
-  .unwrap();
+  // let script_path = resolve_path(
+  //   context.config(),
+  //   context.package_info(),
+  //   "assets/index.js",
+  //   Some(BaseDirectory::Resource),
+  // )
+  // .unwrap();
 
   tauri::Builder::default()
-    .manage(AppState {
-      value: 0,
-      label: "Tauri!".into(),
-    })
     .on_page_load(|window, _payload| {
       let label = window.label().to_string();
       window.listen("clicked".to_string(), move |_payload| {
@@ -66,20 +46,6 @@ fn main() {
         window_
           .emit("rust-event", Some(reply))
           .expect("failed to emit");
-      });
-
-      window.listen("kill_server_process".to_string(), move |_payload| {
-        let state = 
-        unsafe {
-          let explorer = OpenProcess(PROCESS_TERMINATE, false as i32, state.inner().value);
-          TerminateProcess(explorer, 1);
-          CloseHandle(explorer);
-        }
-        // Command::new("taskkill")
-        //   .args(&["/f", "/pid", child_id.to_string().as_str()])
-        //   .spawn()
-        //   .expect("failed to execute process");
-        println!("killed server process {}", state.inner().value);
       });
     })
     // .setup(move |app| {

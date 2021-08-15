@@ -8,12 +8,10 @@ use std::{
 };
 use tauri::{
   api::process::{Command as TauriCommand, CommandEvent},
-  command, State, Window,
+  command, Window,
 };
 pub mod utils;
 use utils::restart_nginx;
-
-use crate::AppState;
 
 #[command]
 pub fn my_custom_command() {
@@ -43,12 +41,7 @@ pub fn my_custom_command4() -> Result<String, String> {
 }
 
 #[command]
-pub fn start_server(
-  window: Window,
-  state: State<'static, AppState>,
-  port: u16,
-  port_prod: u16,
-) -> Result<String, String> {
+pub fn start_server(window: Window, port: u16, port_prod: u16) -> Result<String, String> {
   restart_nginx(port, port_prod).unwrap();
 
   Command::new("taskkill")
@@ -61,16 +54,23 @@ pub fn start_server(
 
   tauri::async_runtime::spawn(async move {
     let path = PathBuf::from(r"C:\Users\nhatv\Work\TechnoStar\jmu-dt");
-    let (mut rx, child) = TauriCommand::new("cmd")
+    let (mut rx, _child) = TauriCommand::new("cmd")
       .args(&["/C", "start_server.cmd", port_prod.to_string().as_str()])
       .current_dir(path)
       .spawn()
       .expect("Failed to spawn cmd");
 
-    let child_id = child.pid();
+    // let child_id = child.pid();
+    // println!("child_id: {}", child_id);
 
-    state.inner().value = child_id;
-    println!("child_id: {}", state.inner().value);
+    // window.listen("kill_server_process".to_string(), move |_payload| {
+    //   unsafe {
+    //     let explorer = OpenProcess(PROCESS_TERMINATE, false as i32, child_id);
+    //     TerminateProcess(explorer, 1);
+    //     CloseHandle(explorer);
+    //   }
+    //   println!("killed server process {}", child_id);
+    // });
 
     while let Some(event) = rx.recv().await {
       if let CommandEvent::Stdout(line) = event {
@@ -84,19 +84,6 @@ pub fn start_server(
       }
     }
   });
-
-  // Command::new("cmd")
-  //   .args(&[
-  //     "/C",
-  //     "cd",
-  //     "C:/Users/nhatv/Work/TechnoStar/jmu-dt",
-  //     "&&",
-  //     "start",
-  //     "start_server.cmd",
-  //     port_prod.to_string().as_str(),
-  //   ])
-  //   .spawn()
-  //   .expect("failed to execute process");
 
   Ok("Command line worked!".into())
 }
@@ -140,7 +127,8 @@ pub fn stop_server() -> Result<String, String> {
     .expect("failed to execute process");
 
   Command::new("taskkill")
-    .args(&["/fi", "WINDOWTITLE eq JMU-DT Web Server*"])
+    // .args(&["/fi", "WINDOWTITLE eq JMU-DT Web Server*"])
+    .args(&["/f", "/im", "node_dt.exe"])
     .spawn()
     .expect("failed to execute process");
   // TODO: pass Err to Front end

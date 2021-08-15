@@ -229,7 +229,7 @@ const App = () => {
                     color="danger"
                     type="button"
                     onClick={() => {
-                      emit("kill_server_process");
+                      // emit("kill_server_process");
             
                       invoke("stop_server");
                       setClientPort(tempClientPort);
