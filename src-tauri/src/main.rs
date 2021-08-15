@@ -16,6 +16,21 @@ struct Reply {
   data: String,
 }
 
+// struct SplashscreenWindow(Arc<Mutex<Window>>);
+// struct MainWindow(Arc<Mutex<Window>>);
+
+// #[command]
+// fn close_splashscreen(
+//   _: Window, // force inference of P
+//   splashscreen: State<SplashscreenWindow>,
+//   main: State<MainWindow>,
+// ) {
+//   // Close splashscreen
+//   splashscreen.0.lock().unwrap().close().unwrap();
+//   // Show main window
+//   main.0.lock().unwrap().show().unwrap();
+// }
+
 fn main() {
   let msg = String::from("Hello WORLD!");
   println!("Message from Rust: {}", msg);
@@ -48,22 +63,30 @@ fn main() {
       });
     })
     // .setup(move |app| {
-    //   let window = app.get_window("main").unwrap();
-    //   let script_path = script_path.to_string_lossy().to_string();
-    //   tauri::async_runtime::spawn(async move {
-    //     let (mut rx, _child) = Command::new("node")
-    //       .args(&[script_path])
-    //       .spawn()
-    //       .expect("Failed to spawn node");
-    //     while let Some(event) = rx.recv().await {
-    //       if let CommandEvent::Stdout(line) = event {
-    //         window
-    //           .emit("message", Some(format!("'{}'", line)))
-    //           .expect("failed to emit event");
-    //       }
-    //     }
-    //   });
+    //   // set the splashscreen and main windows to be globally available with the tauri state API
+    //   app.manage(SplashscreenWindow(Arc::new(Mutex::new(
+    //     app.get_window("splashscreen").unwrap(),
+    //   ))));
+    //   app.manage(MainWindow(Arc::new(Mutex::new(
+    //     app.get_window("main").unwrap(),
+    //   ))));
     //   Ok(())
+    // let window = app.get_window("main").unwrap();
+    // let script_path = script_path.to_string_lossy().to_string();
+    // tauri::async_runtime::spawn(async move {
+    //   let (mut rx, _child) = Command::new("node")
+    //     .args(&[script_path])
+    //     .spawn()
+    //     .expect("Failed to spawn node");
+    //   while let Some(event) = rx.recv().await {
+    //     if let CommandEvent::Stdout(line) = event {
+    //       window
+    //         .emit("message", Some(format!("'{}'", line)))
+    //         .expect("failed to emit event");
+    //     }
+    //   }
+    // });
+    // Ok(())
     // })
     // .menu(menu::get_menu())
     // .on_menu_event(|event| {
@@ -123,7 +146,8 @@ fn main() {
       stop_server,
       read_config,
       menu_toggle,
-      window_label
+      window_label,
+      // close_splashscreen
     ])
     .build(context)
     .expect("error while building tauri application")

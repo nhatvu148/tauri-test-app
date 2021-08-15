@@ -4,8 +4,12 @@
     "version": "0.1.0"
   },
   "build": {
-    "distDir": ["../index.html"],
-    "devPath": ["../index.html"],
+    "distDir": [
+      "../index.html"
+    ],
+    "devPath": [
+      "../index.html"
+    ],
     "beforeDevCommand": "",
     "beforeBuildCommand": "",
     "withGlobalTauri": true
@@ -59,6 +63,15 @@
         "height": 600,
         "resizable": true,
         "fullscreen": false
+      },
+      {
+        "width": 800,
+        "height": 550,
+        "decorations": false,
+        "center": true,
+        "resizable": false,
+        "url": "splashscreen/index.html",
+        "label": "splashscreen"
       }
     ],
     "security": {
